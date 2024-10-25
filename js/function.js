@@ -1,11 +1,8 @@
 const getChecked = (string, maxLength) => string.length <= maxLength;
 
-// Строка короче 20 символов
-console.log(getChecked('проверяемая строка', 20)); // true
-// Длина строки ровно 18 символов
-console.log(getChecked('проверяемая строка', 18)); // true
-// Строка длиннее 10 символов
-console.log(getChecked('проверяемая строка', 10)); // false
+getChecked('проверяемая строка', 20);
+getChecked('проверяемая строка', 18);
+getChecked('проверяемая строка', 10);
 
 const findPalidrom = (string) => {
   let normString = string.replaceAll(' ', '').toLowerCase();
@@ -15,14 +12,11 @@ const findPalidrom = (string) => {
   }
   return emptyString === normString;
 }
-// Строка является палиндромом
-console.log(findPalidrom('топот')); // true
-// Несмотря на разный регистр, тоже палиндром
-console.log(findPalidrom('ДовОд')); // true
-// Это не палиндром
-console.log(findPalidrom('Кекс'));  // false
-// Это палиндром
-console.log(findPalidrom('Лёша на полке клопа нашёл ')); // true
+
+findPalidrom('топот');
+findPalidrom('ДовОд');
+findPalidrom('Кекс');  // false
+findPalidrom('Лёша на полке клопа нашёл '); // true
 
 
 const getNumber = (string) => {
@@ -37,14 +31,14 @@ const getNumber = (string) => {
   return stringWithNumber === '' ? NaN : Number(stringWithNumber);
 }
 
-console.log(getNumber('2023 год'));            // 2023
-console.log(getNumber('ECMAScript 2022'));     // 2022
-console.log(getNumber('1 кефир, 0.5 батона')); // 105
-console.log(getNumber('агент 007'));           // 7
-console.log(getNumber('а я томат'));           // NaN
+getNumber('2023 год');            // 2023
+getNumber('ECMAScript 2022');     // 2022
+getNumber('1 кефир, 0.5 батона'); // 105
+getNumber('агент 007');           // 7
+getNumber('а я томат');           // NaN
 
-console.log(getNumber(2023)); // 2023
-console.log(getNumber(-1));   // 1
-console.log(getNumber(1.5));  // 15
+getNumber(2023); // 2023
+getNumber(-1);   // 1
+getNumber(1.5);  // 15
 
 
