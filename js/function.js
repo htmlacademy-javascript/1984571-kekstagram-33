@@ -42,3 +42,22 @@ getNumber(-1);
 getNumber(1.5);
 
 
+const getMeetingPossibility = (jobStart, jobEnd, meetingStart, meetingTime) => {
+  jobStart = jobStart.split(':');
+  jobStart = +jobStart[0] * 60 + +jobStart[1];
+  jobEnd = jobEnd.split(':');
+  jobEnd = +jobEnd[0] * 60 + +jobEnd[1];
+  meetingStart = meetingStart.split(':');
+  meetingStart = +meetingStart[0] * 60 + +meetingStart[1];
+  const meetingEnd = meetingStart + meetingTime;
+  if (meetingStart >= jobStart && meetingEnd <= jobEnd) {
+    return true;
+  }
+  return false;
+};
+
+getMeetingPossibility('08:00', '17:30', '14:00', 90);
+getMeetingPossibility('8:0', '10:0', '8:0', 120);
+getMeetingPossibility('08:00', '14:30', '14:00', 90);
+getMeetingPossibility('14:00', '17:30', '08:0', 90);
+getMeetingPossibility('8:00', '17:30', '08:00', 900);
