@@ -1,4 +1,3 @@
-import {createPosts} from './data.js';
+import {displaysThumbnails, thumbnails} from './draw-thumbnails.js';
 
-createPosts();
-
+displaysThumbnails(thumbnails);
