@@ -1,9 +1,8 @@
-import {createPosts} from './create-thumbnails.js';
+import {createDataPosts} from './create-data-posts.js';
 const thumbnailsBlock = document.querySelector('.pictures');
 const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
-const thumbnails = createPosts();
+const thumbnails = createDataPosts();
 const thumbnailsListFragment = document.createDocumentFragment();
-
 const displaysThumbnails = (thumbnailsList) => {
   thumbnailsList.forEach(({url, description, likes, comments}) => {
     const templateClone = thumbnailTemplate.cloneNode(true);

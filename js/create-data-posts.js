@@ -38,16 +38,16 @@ const createComment = () => ({
 });
 
 
-const randomComments = Array.from({length: getRandomInteger(commentsNumber.MIN, commentsNumber.MAX)}, createComment);
+const randomComments = () => Array.from({length: getRandomInteger(commentsNumber.MIN, commentsNumber.MAX)}, createComment);
 
-const createPost = () => ({
+const createDataPost = () => ({
   id: createRandomId(),
   url: `photos/${createRandomAdress()}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
   likes: getRandomInteger(likesNumber.MIN, likesNumber.MAX),
-  comments: randomComments
+  comments: randomComments()
 });
 
-const createPosts = () => Array.from({length: PHOTOS_NUMBER}, createPost);
+const createDataPosts = () => Array.from({length: PHOTOS_NUMBER}, createDataPost);
 
-export {createPosts};
+export {createDataPosts};
