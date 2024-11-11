@@ -23,4 +23,6 @@ const createRandomValuesRangeGenerator = (min, max) => {
   };
 };
 
-export {getRandomInteger, getRandomArrayElement, createRandomValuesRangeGenerator};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomInteger, getRandomArrayElement, createRandomValuesRangeGenerator, isEscapeKey};
