@@ -8,11 +8,11 @@ const imgComments = document.querySelector('.social__comment-total-count');
 const commentsContainer = document.querySelector('.social__comments');
 const commentItem = commentsContainer.querySelector('.social__comment');
 const shownComments = document.querySelector('.social__comment-shown-count');
-const commentsCounter = document.querySelector('.social__comment-count');
-const commentsLoader = document.querySelector('.comments-loader');
 const closeButton = document.querySelector('.big-picture__cancel');
 const photoDescription = document.querySelector('.social__caption');
+const moreComments = document.querySelector('.comments-loader');
 const commentListFragment = document.createDocumentFragment();
+
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -26,24 +26,21 @@ function openFullsizePhoto() {
   document.addEventListener('keydown', onDocumentKeydown);
 }
 
-commentsCounter.classList.add('hidden');
-commentsLoader.classList.add('hidden');
-
 function closeFullsizePhoto() {
   modal.classList.add('hidden');
 }
 
 const showComments = (allComments) => {
-  allComments.forEach((comment) => {
+  for (let i = 0; i < allComments.length; i++) {
     const commentItemClone = commentItem.cloneNode(true);
-    commentItemClone.querySelector('.social__picture').src = comment.avatar;
-    commentItemClone.querySelector('.social__picture').alt = comment.name;
-    commentItemClone.querySelector('.social__text').textContent = comment.message;
+    commentItemClone.querySelector('.social__picture').src = allComments[i].avatar;
+    commentItemClone.querySelector('.social__picture').alt = allComments[i].name;
+    commentItemClone.querySelector('.social__text').textContent = allComments[i].message;
     commentListFragment.appendChild(commentItemClone);
-  });
-  commentsContainer.innerHTML = '';
+  }
   commentsContainer.appendChild(commentListFragment);
 };
+
 
 function transferModalData(evt, photoLink) {
   modalImg.src = evt.target.src;
@@ -51,11 +48,28 @@ function transferModalData(evt, photoLink) {
   imgComments.textContent = photoLink.querySelector('.picture__comments').textContent;
   shownComments.textContent = photoLink.querySelector('.picture__comments').textContent;
   photoDescription.textContent = photoLink.querySelector('.picture__img').alt;
+  let minCommentIndex = 0;
+  let step = 5;
   thumbnails.forEach((thumbnail) => {
     if (evt.target.src.includes(thumbnail.url)) {
-      showComments(thumbnail.comments);
+      commentsContainer.innerHTML = '';
+
+      showComments(thumbnail.comments.slice(minCommentIndex, step));
+      shownComments.textContent = step;
+      moreComments.addEventListener('click', () => {
+
+
+        showComments(thumbnail.comments.slice(minCommentIndex += 5, step += 5));
+        shownComments.textContent = step;
+        if (thumbnail.comments.length <= step) {
+          moreComments.classList.add('hidden');
+          shownComments.textContent = thumbnail.comments.length;
+        }
+
+      });
     }
   });
+
 }
 
 closeButton.addEventListener('click', () => {
