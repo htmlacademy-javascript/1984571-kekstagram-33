@@ -1,6 +1,6 @@
 import {displaysThumbnails, thumbnails} from './draw-thumbnails.js';
 import {transferModalData, openFullsizePhoto} from './draw-fullsize-photo.js';
-import {validateForm, blockEscapeAction} from './form.js';
+import {validateForm, blockEscapeAction, scallingPhoto} from './form.js';
 displaysThumbnails(thumbnails);
 
 const photosLinks = document.querySelectorAll('.picture');
@@ -15,5 +15,5 @@ photosLinks.forEach((photoLink) => {
 
 validateForm();
 blockEscapeAction();
-
+scallingPhoto();
 

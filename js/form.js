@@ -7,6 +7,42 @@ const buttonCloseForm = document.querySelector('.img-upload__cancel');
 const photoEditForm = document.querySelector('.img-upload__form');
 const commentArea = document.querySelector('.text__description');
 const buttonUploadForm = document.querySelector('.img-upload__submit');
+const photoZoomButton = document.querySelector('.scale__control--bigger');
+const photoZoomoutButton = document.querySelector('.scale__control--smaller');
+const photoScaleValue =  document.querySelector('.scale__control--value');
+const photoForm = document.querySelector('.img-upload__preview');
+const sliderElement = document.querySelector('.effect-level__slider');
+const effectLevel = document.querySelector('.effect-level__value');
+const sliderEffectsList = document.querySelector('.effects__list');
+const effectsButton = document.querySelectorAll('.effects__radio');
+const sliderElementContainer = document.querySelector('.img-upload__effect-level');
+const originalEffect = document.querySelector('#effect-none');
+
+const scallingPhoto = () => {
+  let step = 25;
+  photoZoomButton.addEventListener('click',  () => {
+    let numericScaleValue = photoScaleValue.value.replace('%', '');
+      numericScaleValue *= 1;
+      if (numericScaleValue <= 75) {
+        numericScaleValue += step;
+        photoScaleValue.value = numericScaleValue + '%';
+        photoForm.style.transform = `scale(${numericScaleValue/100})`;
+      }
+  });
+
+  photoZoomoutButton.addEventListener('click',  () => {
+    let numericScaleValue = photoScaleValue.value.replace('%', '');
+      numericScaleValue *= 1;
+      if (numericScaleValue >= 50) {
+      numericScaleValue -= step;
+      photoScaleValue.value = numericScaleValue + '%';
+      photoForm.style.transform = `scale(${numericScaleValue/100})`;
+      }
+  });
+
+}
+
+
 
 const disableButtonUploadForm = () => {
   buttonUploadForm.disabled = true;
@@ -182,6 +218,75 @@ const blockEscapeAction = () => {
   };
 };
 
-export {validateForm, blockEscapeAction};
+let sliderSettings = {
+  range: {
+    min: 0,
+    max: 1,
+  },
+  start: 0,
+  step: 0.1
+}
+
+noUiSlider.create(sliderElement, sliderSettings);
+
+const setPhotoEffectValue = (effect,unit) => {
+  sliderElement.noUiSlider.on('update', () => {
+    let effectLevel = sliderElement.noUiSlider.get();
+    if (effect == 'none'){
+      sliderElement.classList.add('hidden');
+      sliderElementContainer.classList.add('hidden');
+      photoForm.style.filter = effect;
+    } else {
+      sliderElement.classList.remove('hidden');
+      sliderElementContainer.classList.remove('hidden');
+      photoForm.style.filter = effect + '(' + effectLevel + unit + ')';
+    }
+  });
+};
+
+setPhotoEffectValue('none','');
+sliderEffectsList.addEventListener('click', (evt) => {
+  let effect;
+  let unit = '';
+  if (evt.target.nodeName === 'INPUT') {
+    switch(evt.target.value){
+      case 'none':
+        sliderSettings.range.max = 0;
+        sliderSettings.step = 0;
+        effect = 'none';
+      break;
+      case 'chrome':
+        effect = 'grayscale';
+        unit = '';
+      break;
+      case 'sepia':
+        sliderSettings;
+        effect = 'sepia';
+        unit = '';
+      break;
+      case 'marvin':
+        sliderSettings.range.max = 100;
+        sliderSettings.step = 1;
+        effect = 'invert';
+        unit = '%';
+      break;
+      case 'phobos':
+        sliderSettings.range.max = 3;
+        effect = 'blur';
+        unit = 'px';
+      break;
+      case 'heat':
+        sliderSettings.range.min = 1;
+        sliderSettings.range.max = 3;
+        effect = 'brightness';
+        unit = '';
+      break;
+    };
+    sliderElement.noUiSlider.updateOptions(sliderSettings);
+    setPhotoEffectValue(effect,unit);
+}
+});
+
+export {validateForm, blockEscapeAction, scallingPhoto};
 
 
