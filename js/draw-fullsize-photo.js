@@ -1,4 +1,3 @@
-import {thumbnails} from './draw-thumbnails.js';
 import {isEscapeKey} from './util.js';
 
 const modal = document.querySelector('.big-picture');
@@ -13,67 +12,64 @@ const photoDescription = document.querySelector('.social__caption');
 const moreComments = document.querySelector('.comments-loader');
 const commentListFragment = document.createDocumentFragment();
 
-
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    closeFullsizePhoto();
+    closeModal();
   }
 };
 
-function openFullsizePhoto() {
-  modal.classList.remove('hidden');
-  document.addEventListener('keydown', onDocumentKeydown);
-}
-
-function closeFullsizePhoto() {
-  modal.classList.add('hidden');
-}
-
-const showComments = (allComments) => {
-  for (let i = 0; i < allComments.length; i++) {
+const cutsComments = (comments, minCommentIndex, step) => function() {
+  if (step > comments.length) {
+    step = comments.length;
+    moreComments.classList.add('hidden');
+    shownComments.textContent = comments.length;
+  } else {
+    shownComments.textContent = step;
+    moreComments.classList.remove('hidden');
+  }
+  for (let i = minCommentIndex; i < step; i++) {
     const commentItemClone = commentItem.cloneNode(true);
-    commentItemClone.querySelector('.social__picture').src = allComments[i].avatar;
-    commentItemClone.querySelector('.social__picture').alt = allComments[i].name;
-    commentItemClone.querySelector('.social__text').textContent = allComments[i].message;
+    commentItemClone.querySelector('.social__picture').src = comments[i].avatar;
+    commentItemClone.querySelector('.social__picture').alt = comments[i].name;
+    commentItemClone.querySelector('.social__text').textContent = comments[i].message;
     commentListFragment.appendChild(commentItemClone);
   }
   commentsContainer.appendChild(commentListFragment);
+  minCommentIndex += 5;
+  step += 5;
 };
 
-
-function transferModalData(evt, photoLink) {
+let showComments;
+const transferModalData = (evt, thumbnails) => {
   modalImg.src = evt.target.src;
-  imgLikes.textContent = photoLink.querySelector('.picture__likes').textContent;
-  imgComments.textContent = photoLink.querySelector('.picture__comments').textContent;
-  shownComments.textContent = photoLink.querySelector('.picture__comments').textContent;
-  photoDescription.textContent = photoLink.querySelector('.picture__img').alt;
-  let minCommentIndex = 0;
-  let step = 5;
+  imgLikes.textContent = evt.target.parentElement.querySelector('.picture__likes').textContent;
+  imgComments.textContent = evt.target.parentElement.querySelector('.picture__comments').textContent;
+  shownComments.textContent = evt.target.parentElement.querySelector('.picture__comments').textContent;
+  photoDescription.textContent = evt.target.parentElement.querySelector('.picture__img').alt;
   thumbnails.forEach((thumbnail) => {
     if (evt.target.src.includes(thumbnail.url)) {
       commentsContainer.innerHTML = '';
-
-      showComments(thumbnail.comments.slice(minCommentIndex, step));
-      shownComments.textContent = step;
-      moreComments.addEventListener('click', () => {
-
-
-        showComments(thumbnail.comments.slice(minCommentIndex += 5, step += 5));
-        shownComments.textContent = step;
-        if (thumbnail.comments.length <= step) {
-          moreComments.classList.add('hidden');
-          shownComments.textContent = thumbnail.comments.length;
-        }
-
-      });
+      showComments = cutsComments(thumbnail.comments, 0, 5);
+      showComments();
+      moreComments.addEventListener('click', showComments);
     }
   });
+};
 
-}
+const openModal = (evt, thumbnails) => {
+  modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentKeydown);
+  transferModalData(evt, thumbnails);
+};
+const closeModal = () => {
+  modal.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onDocumentKeydown);
+  moreComments.removeEventListener('click', showComments);
+};
 
-closeButton.addEventListener('click', () => {
-  closeFullsizePhoto();
-});
+closeButton.addEventListener('click', closeModal);
 
-export {transferModalData, openFullsizePhoto};
+export {openModal};

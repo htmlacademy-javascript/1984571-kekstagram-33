@@ -1,7 +1,5 @@
-import {createDataPosts} from './create-data-posts.js';
 const thumbnailsBlock = document.querySelector('.pictures');
 const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
-const thumbnails = createDataPosts();
 const thumbnailsListFragment = document.createDocumentFragment();
 const displaysThumbnails = (thumbnailsList) => {
   thumbnailsList.forEach(({url, description, likes, comments}) => {
@@ -15,6 +13,6 @@ const displaysThumbnails = (thumbnailsList) => {
   thumbnailsBlock.appendChild(thumbnailsListFragment);
 };
 
-export {displaysThumbnails, thumbnails};
+export {displaysThumbnails};
 
 

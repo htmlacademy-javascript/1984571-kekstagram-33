@@ -14,6 +14,13 @@ const photoForm = document.querySelector('.img-upload__preview');
 const sliderElement = document.querySelector('.effect-level__slider');
 const sliderEffectsList = document.querySelector('.effects__list');
 const sliderElementContainer = document.querySelector('.img-upload__effect-level');
+const successMessageTemplate = document.querySelector('#success').content;
+const successMessageClone = successMessageTemplate.cloneNode(true);
+const successMessage = document.createDocumentFragment();
+const errorMessageTemplate = document.querySelector('#error').content;
+const errorMessageClone = errorMessageTemplate.cloneNode(true);
+const errorMessage = document.createDocumentFragment();
+
 
 const scallingPhoto = () => {
   const step = 25;
@@ -53,12 +60,14 @@ const closePhotoEditForm = () => {
   document.body.classList.remove('modal-open');
 };
 
+
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     closePhotoEditForm();
   }
 };
+
 
 buttonCloseForm.addEventListener('click', closePhotoEditForm);
 
@@ -110,11 +119,79 @@ const findStringSpaces = (value) => {
 
 const getSpaceError = () => ('Поставьте пробел между хэштегами!');
 
+const clearModalData = () => {
+  photoForm.style.transform = `scale(${1})`;
+  photoForm.style.filter = 'none';
+  photoScaleValue.value = `${100}%`;
+  sliderElement.classList.add('hidden');
+  sliderElementContainer.classList.add('hidden');
+  inputHashtagsText.value = '';
+  commentArea.value = '';
+  buttonOpenForm.value = '';
+};
 
-photoEditForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+const setUserFormSubmit = (onSuccess) => {
+  photoEditForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      const formData = new FormData(evt.target);
+      fetch(
+        'https://32.javascript.htmlacademy.pro/kekstagram',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      ).then((response) => {
+        if (response.ok) {
+          onSuccess();
+          clearModalData();
+          successMessage.appendChild(successMessageClone);
+          document.body.appendChild(successMessage);
+          const successModal = document.querySelector('.success');
+          const successButton = document.querySelector('.success__button');
+          // const successInner = document.querySelector('.success__inner');
+          successButton.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+          });
+          document.addEventListener('keydown', (evt) => {
+            if (isEscapeKey(evt)) {
+              successModal.classList.add('hidden');
+            }
+          });
+          document.addEventListener('click', (evt) => {
+            if (evt.target.className !== 'success__inner') {
+              successModal.classList.add('hidden');
+            }
+          });
+          successModal.classList.remove('hidden');
+        }
+      })
+        .catch(() => {
+          errorMessage.appendChild(errorMessageClone);
+          document.body.appendChild(errorMessage);
+          const errorModal = document.querySelector('.error');
+          const errorButton = document.querySelector('.error__button');
+          errorButton.addEventListener('click', () => {
+            errorModal.classList.add('hidden');
+          });
+          document.addEventListener('keydown', (evt) => {
+            if (isEscapeKey(evt)) {
+              errorModal.classList.add('hidden');
+            }
+          });
+          document.addEventListener('click', (evt) => {
+            if (evt.target.className !== 'error__inner') {
+              errorModal.classList.add('hidden');
+            }
+          });
+          errorModal.classList.remove('hidden');
+        });
+    }
+  });
+};
+
+buttonCloseForm.addEventListener('click', clearModalData);
 
 const compareHastags = (value) => {
   let flag = true;
@@ -282,6 +359,4 @@ sliderEffectsList.addEventListener('click', (evt) => {
   }
 });
 
-export {validateForm, blockEscapeAction, scallingPhoto};
-
-
+export {validateForm, blockEscapeAction, scallingPhoto, closePhotoEditForm, setUserFormSubmit};
